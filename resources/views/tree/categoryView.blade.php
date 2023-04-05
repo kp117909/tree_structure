@@ -162,6 +162,78 @@
         })
     }
 
+    slist(document.getElementById("my_tree"))
+
+    let my_elem = [];
+    let index = 0;
+    function slist (target) {
+
+        target.classList.add("slist");
+        let items = target.getElementsByTagName("li"), current = null;
+        // Dodanie wszystkich elementów jako draggable
+        for (let i of items) {
+
+            i.draggable = true;
+
+            i.ondragstart = e => {
+                my_elem[index] = $(i.getElementsByTagName("a")).attr('id')
+                index = index + 1;
+                for (let it of items) {
+                    if (it != current) { it.classList.add("hint"); }
+                }
+            };
+
+            //Dodawanie i usuwanie wyglądu CSS
+            i.ondragenter = e => {
+                if (i != current) { i.classList.add("active"); }
+            };
+
+            i.ondragleave = () => i.classList.remove("active");
+
+            i.ondragend = () => { for (let it of items) {
+                it.classList.remove("hint");
+                it.classList.remove("active");
+            }};
+            i.ondragover = e =>{
+                e.preventDefault();
+            }
+
+            // Drop na dany katalog
+            i.ondrop = e => {
+                e.preventDefault();
+                if (i != current) {
+                    if(my_elem[0] == $(i.getElementsByTagName("a")).attr('id')){
+                        temp_array = [];index = 0;my_elem = temp_array;
+                        return
+                    }
+                    if (my_elem[0] != undefined) {
+                        editElementPlace(my_elem[0], $(i.getElementsByTagName("a")).attr('id'));
+                        temp_array = []
+                        index = 0;
+                        my_elem = temp_array;
+                    }
+                }
+            };
+        }
+    }
+
+    function editElementPlace(id, new_parent){
+        console.log("NEW PARENT: " + new_parent);
+        console.log("ID: "+ id)
+        $.ajax({
+            url: "{{ route('tree.editPlace') }}",
+            type: "GET",
+            dataType: 'json',
+            data: {id: id, new_parent:new_parent},
+            success: function (response) {
+                console.log(response)
+            },
+            error: function (error) {
+                Swal.fire('Nie udało sie przenieść kategori!', '', 'error');
+            },
+        })
+    }
+
 </script>
 
 <script src = "/js/javascript.js"></script>

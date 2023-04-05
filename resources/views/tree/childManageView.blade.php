@@ -1,5 +1,5 @@
 
-<ul>
+<ul id = "my_tree">
     @foreach($childs as $child)
     <li>
         <a id = "{{$child->id}}" onclick = "addCategory(this.id,'{{$child->title}}')">
