@@ -76,5 +76,20 @@ class CategoryController extends Controller
 
 
     }
+    public function editCategoryParent(Request $request){
+        $category = Category::find($request->id);
+
+        $parent = Category::with('childs')->where('id', $request->new_parent)->get();
+
+            if ($parent[0]['parent_id'] == $request->id) {
+                return "Bad thing";
+            } else {
+                $category->parent_id = $request->new_parent;
+
+                $category->update();
+
+                return $category;
+            }
+    }
 
 }

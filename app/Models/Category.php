@@ -19,5 +19,9 @@ class Category extends Model
         return $this->hasMany('App\Models\Category', 'parent_id', 'id');
     }
 
+//    public function parents(){
+//        return $this->belongsToMany('App\Models\Category', 'id', 'parent_id');
+//    }
+
     use HasFactory;
 }

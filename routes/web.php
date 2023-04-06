@@ -26,6 +26,8 @@ Route::get('tree.editCategory', [CategoryController::class, 'editCategory'])->na
 
 Route::get('tree.deleteCategory', [CategoryController::class, 'deleteCategory'])->name('tree.deleteCategory');
 
+Route::get('tree.editPlace', [CategoryController::class, 'editCategoryParent'])->name('tree.editPlace');
+
 
 
 //Route::get('/', function () {

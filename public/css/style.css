@@ -2,6 +2,7 @@
     margin:0;
     padding:0;
     list-style:none
+
 }
 .tree ul {
     margin-left:1em;
@@ -22,8 +23,8 @@
     padding:0 1em;
     line-height:2em;
     color:#369;
+    width:20rem;
     font-weight:700;
-    width:10rem;
     position:relative
 }
 .tree ul li:before {
@@ -53,6 +54,11 @@
     height: 1.7rem;
     background:transparent;
     outline: 0;
+}
+
+.tree li.active {
+    border: 1px solid #369;
+    background: #ceedc1;
 }
 
 .d-flex {
