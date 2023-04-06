@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->string("title");
             $table->integer("parent_id");
-            $table->ltree('path')->nullable()->spatialIndex();
             $table->timestamps();
         });
     }

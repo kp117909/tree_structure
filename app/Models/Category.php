@@ -16,12 +16,12 @@ class Category extends Model
     protected $table = 'category';
 
     public function childs() {
-        return $this->belongsToMany('App\Models\Category', 'parent_id', 'id');
+        return $this->hasMany('App\Models\Category', 'parent_id', 'id');
     }
 
-    public function parents(){
-        return $this->belongsToMany('App\Models\Category', 'id', 'parent_id');
-    }
+//    public function parents(){
+//        return $this->belongsToMany('App\Models\Category', 'id', 'parent_id');
+//    }
 
     use HasFactory;
 }

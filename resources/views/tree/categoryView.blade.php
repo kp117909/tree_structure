@@ -226,7 +226,7 @@
             dataType: 'json',
             data: {id: id, new_parent:new_parent},
             success: function (response) {
-                console.log(response)
+                location.reload();
             },
             error: function (error) {
                 Swal.fire('Nie udało sie przenieść kategori!', '', 'error');
