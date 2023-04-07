@@ -23,8 +23,21 @@ $.fn.extend({
                 e.preventDefault();
             });
         });
+    },
+
+    treedAll: function(o){
+        var tree = $(this);
+        tree.find('li').has("ul").each(function () {
+            var branch = $(this);
+            branch.children().children().toggle();
+        });
     }
 });
+
+function toggleAll(){
+    $('#my_tree').treedAll()
+}
+
 $('#my_tree').treed()
 
 

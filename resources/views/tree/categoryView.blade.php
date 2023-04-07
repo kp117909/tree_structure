@@ -4,28 +4,48 @@
     <meta charset="utf-8">
 
     <link href = "{{url('css/style.css')}}" rel = "stylesheet"/>
-
+    {{-- Jquery --}}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <script
-        type="text/javascript"
-        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"
-    ></script>
-
-    <!-- custom alerts -->
+    <!-- Alerty custom oraz kit ikon -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://kit.fontawesome.com/3133d360bd.js" crossorigin="anonymous"></script>
     <!-- Bootstrap -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css" rel="stylesheet"/>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
 </head>
 <body>
 <div class="relative d-flex items-center justify-content-center">
     <div class="container mt-5">
         <div class="row d-flex justify-content-end">
                 <div class = "col-md-6">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h4 class="text-center">Lista katalogów</h4>
-                    </div>
+                    <h4 class="text-center">Sortuj liste katalogów</h4>
+                        <div class = "row">
+                            <div class = "col-md-4">
+                                <a href="{{ url('categoryIndex/order') }}" class="btn btn-primary pull-right">Rosnąco</a>
+                            </div>
+                            <div class = "col-md-4">
+                                <a href="{{ url('categoryIndex/desc') }}" class="btn btn-primary pull-right">Malejąco</a>
+                            </div>
+                            <div class = "col-md-4">
+                                <a href="{{ url('categoryIndex/none') }}" class="btn btn-primary pull-right">Brak sortowania</a>
+                            </div>
+                        </div>
+                        <div class = "mt-4">
+                            <div class = "row">
+                                <div class = "col-md-6">
+                                        <h4 class="text-center">Lista katalogów</h4>
+                                </div>
+                                <div class = "col-md-6">
+                                    <button class="btn btn-primary profile-button" onclick ="toggleAll()">Rozwiń/Zwiń Katalogi</button>
+                                </div>
+                            </div>
+                        </div>
                     <ul id = "my_tree">
+                        <li>
+                            <a id = "0">
+                               SZCZYT KATALOGU
+                            </a>
+                        </li>
                         @foreach($categories as $category)
                             <li>
                                 <a id = "{{$category->id}}" onclick = "addCategory(this.id,'{{$category->title}}')">
@@ -33,7 +53,13 @@
                                     </a>  {{$category->title}}
                                 @if(count($category->childs))
                                     <i class="show fa-solid fa-chevron-right"></i>
-                                    @include('tree.childManageView', ['childs'=>$category->childs])
+                                    @if(session("sort_type") == 'none')
+                                        @include('tree.childManageView', ['childs'=>$category->childs])
+                                    @elseif(session("sort_type") == 'order')
+                                        @include('tree.childManageView', ['childs'=>$category->childs_orderBy])
+                                    @elseif(session("sort_type") == "desc")
+                                        @include('tree.childManageView', ['childs'=>$category->childs_orderByDesc])
+                                    @endif
                                 @endif
                             </li>
                         @endforeach
@@ -62,7 +88,8 @@
 </body>
 
 <script>
-
+    //Podane funkcje znajduja się tutaj ponieważ, nie wiem dlaczego ajax nie łapał scieżek route w osobnym pliku
+    //Dodawanie nowego katalogu
     function addCategory(id,title){
         Swal.fire({
             title: 'Panel Katalogu',
@@ -102,7 +129,7 @@
             }
         });
     }
-
+    //Edytowanie katalogu w którym znajduja sie przyciski do usuwania
     function editCategory(id, title){
         Swal.fire({
             title: 'Panel edycji katalogu',
@@ -145,7 +172,8 @@
         });
     }
 
-
+    //Usuwanie katalogu "type" zależnie od tego czy chcemy usunąć katalog z elementami czy elementy zostawić i przypisać je
+    // do katalogu wyżej
     function deleteButton(id, type){
         $.ajax({
             url: "{{ route('tree.deleteCategory') }}",
@@ -162,13 +190,14 @@
         })
     }
 
-    slist(document.getElementById("my_tree"))
+    //Przenoszenie węzłów do innych gałęzi za pomocą drag and drop
+    editPlace(document.getElementById("my_tree"))
 
     let my_elem = [];
     let index = 0;
-    function slist (target) {
 
-        target.classList.add("slist");
+    function editPlace (target) {
+
         let items = target.getElementsByTagName("li"), current = null;
         // Dodanie wszystkich elementów jako draggable
         for (let i of items) {
@@ -218,8 +247,6 @@
     }
 
     function editElementPlace(id, new_parent){
-        console.log("NEW PARENT: " + new_parent);
-        console.log("ID: "+ id)
         $.ajax({
             url: "{{ route('tree.editPlace') }}",
             type: "GET",
@@ -229,7 +256,7 @@
                 location.reload();
             },
             error: function (error) {
-                Swal.fire('Nie udało sie przenieść kategori!', '', 'error');
+                Swal.fire(error.responseText, '', 'error');
             },
         })
     }
@@ -237,6 +264,4 @@
 </script>
 
 <script src = "/js/javascript.js"></script>
-
-
 </html>

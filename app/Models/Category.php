@@ -19,6 +19,23 @@ class Category extends Model
         return $this->hasMany('App\Models\Category', 'parent_id', 'id');
     }
 
+    public function childs_orderBy() {
+        return $this->hasMany('App\Models\Category', 'parent_id', 'id')->orderBy('title');
+    }
+
+    public function childs_orderByDesc(){
+        return $this->hasMany('App\Models\Category', 'parent_id', 'id')->orderBy('title', 'desc');
+    }
+
+    public function parent()
+    {
+        return $this->hasOne('App\Models\Category', 'id', 'parent_id');
+    }
+
+    public function likes() {
+        return $this->hasMany(Category::class);
+    }
+
 //    public function parents(){
 //        return $this->belongsToMany('App\Models\Category', 'id', 'parent_id');
 //    }

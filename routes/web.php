@@ -14,9 +14,9 @@ use App\Http\Controllers\CategoryController;
 */
 
 
-
-
 Route::get('/', [CategoryController::class, 'categoryIndex']);
+
+Route::get('categoryIndex/{sort_type}', [CategoryController::class, 'categoryIndex']);
 
 Route::get('tree.addCategory', [CategoryController::class, 'addCategory'])->name('tree.addCategory');
 
@@ -28,8 +28,3 @@ Route::get('tree.deleteCategory', [CategoryController::class, 'deleteCategory'])
 
 Route::get('tree.editPlace', [CategoryController::class, 'editCategoryParent'])->name('tree.editPlace');
 
-
-
-//Route::get('/', function () {
-//    return view('tree.categoryView');
-//});

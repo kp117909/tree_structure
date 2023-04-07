@@ -7,12 +7,19 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function categoryIndex(){
-        $categories = Category::where('parent_id', '=', 0)->get();
-        $allCategories = Category::all();
+    public function categoryIndex(Request $request){
+        if($request->sort_type == 'none' || $request->sort_type == null){
+            $categories = Category::where('parent_id', '=', 0)->get();
+        }else if($request->sort_type == "order"){
+            $categories = Category::where('parent_id', '=', 0)->orderBy('title')->get();
+        }else if($request->sort_type == "desc"){
+            $categories = Category::where('parent_id', '=', 0)->orderBy('title', 'desc')->get();
+        }
+
+        session()->put('sort_type', $request->sort_type);
+
         return view('tree.categoryView', [
             'categories' => $categories,
-            'allCategories' => $allCategories
         ]);
     }
 
@@ -20,12 +27,11 @@ class CategoryController extends Controller
         $this->validate($request,[
             'title'=>'required|max:50',
         ]);
-        $elem = $request->all();
 
+        $elem = $request->all();
         $elem['parent_id'] = empty($elem['id']) ? 0: $elem['id'];
 
         Category::create($elem);
-
 
         return $elem;
     }
@@ -34,16 +40,17 @@ class CategoryController extends Controller
         $this->validate($request,[
             'title_new'=>'required|max:50',
         ]);
+
         $elem = $request->all();
         $elem['title'] = $request->title_new;
         $elem['parent_id'] = 0;
 
         Category::create($elem);
+
         return back();
     }
 
-    public function editCategory(Request $request)
-    {
+    public function editCategory(Request $request){
         $this->validate($request, [
             'title' => 'required|max:50',
         ]);
@@ -57,7 +64,6 @@ class CategoryController extends Controller
 
     public function deleteCategory(Request $request){
         $category = Category::find($request->id);
-
         $deleteCategory_parentId = $category->parent_id;
         $category_parent = Category::where('parent_id', '=', $category->id)->get();
 
@@ -77,19 +83,25 @@ class CategoryController extends Controller
 
     }
     public function editCategoryParent(Request $request){
+        $tree = [];
         $category = Category::find($request->id);
+        $check_parent = Category::find($request->new_parent);
 
-        $parent = Category::with('childs')->where('id', $request->new_parent)->get();
+        while($check_parent){
+            array_unshift($tree, $check_parent->id);
+            $check_parent = $check_parent->parent;
+        }
 
-            if ($parent[0]['parent_id'] == $request->id) {
-                return "Bad thing";
-            } else {
-                $category->parent_id = $request->new_parent;
-
-                $category->update();
-
-                return $category;
+        for($i = 0 ; $i < count($tree) ; $i++) {
+            if ($tree[$i] == $request->id) {
+                return "Nie możesz przenieść tego folderu w to miejsce!";
             }
+        }
+
+        $category->parent_id = $request->new_parent;
+        $category->update();
+
+        return $category;
     }
 
 }
