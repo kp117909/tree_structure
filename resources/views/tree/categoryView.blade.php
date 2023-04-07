@@ -42,9 +42,7 @@
                         </div>
                     <ul id = "my_tree">
                         <li>
-                            <a id = "0">
-                               SZCZYT KATALOGU
-                            </a>
+                            <a id = "0">[Przenieś na górę]</a>
                         </li>
                         @foreach($categories as $category)
                             <li>

@@ -8,16 +8,18 @@ use Illuminate\Http\Request;
 class CategoryController extends Controller
 {
     public function categoryIndex(Request $request){
+
+
         if($request->sort_type == 'none' || $request->sort_type == null){
+            session()->put('sort_type','none');
             $categories = Category::where('parent_id', '=', 0)->get();
         }else if($request->sort_type == "order"){
             $categories = Category::where('parent_id', '=', 0)->orderBy('title')->get();
+            session()->put('sort_type', $request->sort_type);
         }else if($request->sort_type == "desc"){
             $categories = Category::where('parent_id', '=', 0)->orderBy('title', 'desc')->get();
+            session()->put('sort_type', $request->sort_type);
         }
-
-        session()->put('sort_type', $request->sort_type);
-
         return view('tree.categoryView', [
             'categories' => $categories,
         ]);
