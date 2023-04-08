@@ -25,6 +25,7 @@ $.fn.extend({
         });
     },
 
+    // rozwiniecie/zwiniecie kazdego katalogu
     treedAll: function(o){
         var tree = $(this);
         tree.find('li').has("ul").each(function () {

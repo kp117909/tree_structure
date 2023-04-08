@@ -6,7 +6,13 @@
             <i class="fa-solid fa-file-pen fa-lg" style="color: #0756f2;"></i></a>  {{$child->title}}
         @if(count($child->childs))
             <i class="show fa-solid fa-chevron-right"></i>
-            @include('tree.childManageView', ['childs'=>$child->childs])
+            @if(session("sort_type") == 'none')
+                @include('tree.childManageView', ['childs'=>$child->childs])
+            @elseif(session("sort_type") == 'order')
+                @include('tree.childManageView', ['childs'=>$child->childs_orderBy])
+            @elseif(session("sort_type") == "desc")
+                @include('tree.childManageView', ['childs'=>$child->childs_orderByDesc])
+            @endif
         @endif
     </li>
     @endforeach

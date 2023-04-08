@@ -21,13 +21,13 @@
                     <h4 class="text-center">Sortuj liste katalogów</h4>
                         <div class = "row">
                             <div class = "col-md-4">
-                                <a href="{{ url('categoryIndex/order') }}" class="btn btn-primary pull-right">Rosnąco</a>
+                                <a href="{{ url('categoryIndex/order') }}" class="btn btn-primary">Rosnąco</a>
                             </div>
                             <div class = "col-md-4">
-                                <a href="{{ url('categoryIndex/desc') }}" class="btn btn-primary pull-right">Malejąco</a>
+                                <a href="{{ url('categoryIndex/desc') }}" class="btn btn-primary">Malejąco</a>
                             </div>
                             <div class = "col-md-4">
-                                <a href="{{ url('categoryIndex/none') }}" class="btn btn-primary pull-right">Brak sortowania</a>
+                                <a href="{{ url('categoryIndex/none') }}" class="btn btn-primary">Brak</a>
                             </div>
                         </div>
                         <div class = "mt-4">
@@ -235,9 +235,7 @@
                     }
                     if (my_elem[0] != undefined) {
                         editElementPlace(my_elem[0], $(i.getElementsByTagName("a")).attr('id'));
-                        temp_array = []
-                        index = 0;
-                        my_elem = temp_array;
+                        temp_array = [];index = 0;  my_elem = temp_array;
                     }
                 }
             };
