@@ -45,9 +45,5 @@ class Category extends Model
         return $this->hasMany(Category::class);
     }
 
-//    public function parents(){
-//        return $this->belongsToMany('App\Models\Category', 'id', 'parent_id');
-//    }
-
     use HasFactory;
 }
