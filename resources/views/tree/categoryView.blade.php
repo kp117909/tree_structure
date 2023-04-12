@@ -76,11 +76,11 @@
                         <div class="d-flex justify-content-between b align-items-center">
                             <h4 class="text-center">Dodaj nową kategorię</h4>
                         </div>
-                    @if ($errors->has('title_new'))
+                        @if ($errors->has('title_new'))
                             <span class="text-danger">Podaj Nazwe</span>
                         @endif
                         <div class="form">
-                            <input type="text" id="title_new" name = "title_new" placeholder="Nazwa"  class="form-control" />
+                            <input type="text" maxlength="50" oninput="setCustomValidity('')" oninvalid="this.setCustomValidity('Wprowadź nazwę')" id="title_new" name = "title_new" placeholder="Nazwa" class="form-control" required/>
                         </div>
                         <div class="form-group">
                             <div class="mt-5 text-center"><button class="btn btn-primary profile-button" type="submit">Dodaj</button></div>
