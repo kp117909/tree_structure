@@ -20,20 +20,25 @@
                 <div class = "col-md-6">
                     <h4 class="text-center">Sortuj liste katalogów</h4>
                         <div class = "row">
-                            <div class = "col-md-4">
+                            <div class = "col-md-3">
                                 <a href="{{ url('categoryIndex/order') }}" class="btn btn-primary">Rosnąco</a>
                             </div>
-                            <div class = "col-md-4">
+                            <div class = "col-md-3">
                                 <a href="{{ url('categoryIndex/desc') }}" class="btn btn-primary">Malejąco</a>
                             </div>
-                            <div class = "col-md-4">
+                            <div class = "col-md-3">
+                                <a type="button"  class="btn btn-primary" onclick = "specialSorting()">
+                                    Niestand.
+                                </a>
+                            </div>
+                            <div class = "col-md-3">
                                 <a href="{{ url('categoryIndex/none') }}" class="btn btn-primary">Brak</a>
                             </div>
                         </div>
                         <div class = "mt-4">
                             <div class = "row">
                                 <div class = "col-md-6">
-                                        <h4 class="text-center">Lista katalogów</h4>
+                                    <h4 class="text-center">Lista katalogów</h4>
                                 </div>
                                 <div class = "col-md-6">
                                     <button class="btn btn-primary profile-button" onclick ="toggleAll()">Rozwiń/Zwiń Katalogi</button>
@@ -42,7 +47,7 @@
                         </div>
                     <ul id = "my_tree">
                         <li>
-                            <a id = "0">[Przenieś na górę]</a>
+                            <a id = "0" class = "no_dragging">[Przenieś na górę]</a>
                         </li>
                         @foreach($categories as $category)
                             <li>
@@ -57,6 +62,8 @@
                                         @include('tree.childManageView', ['childs'=>$category->childs_orderBy])
                                     @elseif(session("sort_type") == "desc")
                                         @include('tree.childManageView', ['childs'=>$category->childs_orderByDesc])
+                                    @elseif(session("sort_type") == "special")
+                                        @include('tree.childManageView', ['childs'=>$category->childs_specialSorting])
                                     @endif
                                 @endif
                             </li>
@@ -83,6 +90,7 @@
             </div>
         </div>
     </div>
+
 </body>
 
 <script>
@@ -254,6 +262,34 @@
             error: function (error) {
                 Swal.fire(error.responseText, '', 'error');
             },
+        })
+    }
+
+    function specialSorting(){
+        Swal.fire({
+            title: 'Sortowanie niestandardowe',
+            icon: 'info',
+            html: '<label>Wprowadź litere po której ma sortować</label>' +
+                '<form action="{{ route('tree.specialSorting') }}" method="POST">'+
+                '@csrf'+
+                    '<div class="col-md-12 mt-2">'+
+                        '@if ($errors->has('new_title'))'+
+                            '<span class="text-danger">Wprowadź fraze po której ma sortować</span>'+
+                        '@endif'+
+                        '<div class="form center">'+
+                         '<input type="text" maxlength="10" id="sort_letter" oninput="setCustomValidity(\'\')" name = "sort_letter" placeholder="Fraza" class="form-control"  oninvalid="this.setCustomValidity(\'Wprowadź znak\')" required/>'+
+                        '</div>'+
+                        '<div class="form-group">'+
+                            '<div class="mt-2 text-center">' +
+                            '<button class="btn btn-primary type="submit">Sortuj</button>' +
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+            '</form>',
+            showCloseButton: false,
+            showCancelButton: false,
+            showDenyButton: false,
+            showConfirmButton: false,
         })
     }
 

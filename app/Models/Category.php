@@ -27,6 +27,15 @@ class Category extends Model
         return $this->hasMany('App\Models\Category', 'parent_id', 'id')->orderBy('title', 'desc');
     }
 
+    public function childs_specialSorting(){
+
+        return $this->hasMany('App\Models\Category', 'parent_id', 'id')
+            ->where('title', 'LIKE', session("sort_key") .'%')->
+            union($this->hasMany('App\Models\Category', 'parent_id', 'id')
+                ->where('title', 'NOT LIKE', session("sort_key") .'%')
+            );
+    }
+
     public function parent()
     {
         return $this->hasOne('App\Models\Category', 'id', 'parent_id');

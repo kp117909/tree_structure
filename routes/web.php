@@ -20,6 +20,10 @@ Route::get('categoryIndex/{sort_type?}', [CategoryController::class, 'categoryIn
 
 Route::get('tree.addCategory', [CategoryController::class, 'addCategory'])->name('tree.addCategory');
 
+Route::get('tree.specialSorting', [CategoryController::class, 'specialSorting'])->name('tree.specialSortingGet');
+
+Route::post('tree.specialSorting', [CategoryController::class, 'specialSorting'])->name('tree.specialSorting');
+
 Route::post('tree.addCategoryForm', [CategoryController::class, 'addCategoryForm'])->name('tree.addCategoryForm');
 
 Route::get('tree.editCategory', [CategoryController::class, 'editCategory'])->name('tree.editCategory');

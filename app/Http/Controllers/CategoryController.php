@@ -104,4 +104,20 @@ class CategoryController extends Controller
         return $category;
     }
 
+    public function specialSorting(Request $request){
+
+        session()->put('sort_type','special');
+        session()->put('sort_key', $request->sort_letter);
+        $categories = Category::where('parent_id', '=', 0)->where('title', 'LIKE', $request->sort_letter .'%')->get();
+
+        $categories_rest = Category::where('parent_id', '=', 0)->where('title', 'NOT LIKE', $request->sort_letter .'%')->get();
+
+        $categories_union = $categories->merge($categories_rest);
+
+        return view('tree.categoryView', [
+            'categories' => $categories_union,
+        ]);
+
+    }
+
 }

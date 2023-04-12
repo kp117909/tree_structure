@@ -12,6 +12,8 @@
                 @include('tree.childManageView', ['childs'=>$child->childs_orderBy])
             @elseif(session("sort_type") == "desc")
                 @include('tree.childManageView', ['childs'=>$child->childs_orderByDesc])
+            @elseif(session("sort_type") == "special")
+                @include('tree.childManageView', ['childs'=>$child->childs_specialSorting])
             @endif
         @endif
     </li>
