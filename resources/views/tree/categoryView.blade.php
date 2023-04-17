@@ -35,6 +35,11 @@
                                 <a href="{{ url('categoryIndex/none') }}" class="btn btn-primary">Brak</a>
                             </div>
                         </div>
+                    <div class = "mt-4">
+                        <div class = "row">
+                            <a href="{{ url('categoryIndex/arrow') }}" class="btn btn-primary">Wczytaj ręczne sortowanie</a>
+                        </div>
+                    </div>
                         <div class = "mt-4">
                             <div class = "row">
                                 <div class = "col-md-6">
@@ -54,13 +59,17 @@
                                 <a id = "{{$category->id}}" onclick = "addCategory(this.id,'{{$category->title}}')">
                                     <i class="fa-solid fa-file-pen fa-lg" style="color: #0756f2;"></i>
                                 </a>
-                                <a id = "{{$category->id}}" onclick = "arrowSorting(this.id,'up')">
-                                    <i class="fa-solid fa-arrow-up" style="color: #0756f2;"></i>
-                                </a>
-                                <a id = "{{$category->id}}" onclick = "arrowSorting(this.id,'down')">
-                                    <i class="fa-solid fa-arrow-down" style="color: #0756f2;"></i>
-                                </a>
                                 {{$category->title}}
+                                @if(!$loop->first)
+                                    <a id = "{{$category->id}}" href="{{ route('tree.arrowSorting', ['id' => $category->id, 'type' =>'up']) }}">
+                                        <i class="fa-solid fa-arrow-up" style="color: #0756f2;"></i>
+                                    </a>
+                                @endif
+                                @if(!$loop->last)
+                                    <a id = "{{$category->id}}" href="{{ route('tree.arrowSorting',['id' => $category->id, 'type' =>'down']) }}">
+                                        <i class="fa-solid fa-arrow-down" style="color: #0756f2;"></i>
+                                    </a>
+                                @endif
                                 @if(count($category->childs))
                                     <i class="show fa-solid fa-chevron-right"></i>
                                     @if(session("sort_type") == 'none')
@@ -300,21 +309,6 @@
             showCancelButton: false,
             showDenyButton: false,
             showConfirmButton: false,
-        })
-    }
-
-    function arrowSorting(id, type){
-        $.ajax({
-            url: "{{ route('tree.arrowSorting') }}",
-            type: "GET",
-            dataType: 'json',
-            data: {id: id, sort:type},
-            success: function (response) {
-                location.reload();
-            },
-            error: function (error) {
-                Swal.fire(error.responseText, '', 'error');
-            },
         })
     }
 

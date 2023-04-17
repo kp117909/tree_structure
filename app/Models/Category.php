@@ -42,6 +42,10 @@ class Category extends Model
 
     }
 
+    public function childs_maxSortId(){
+        return $this->hasMany('App\Models\Category', 'parent_id', 'id')->max('sort_id');
+    }
+
     public function parent()
     {
         return $this->hasOne('App\Models\Category', 'id', 'parent_id');

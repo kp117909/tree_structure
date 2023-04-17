@@ -16,13 +16,13 @@ use App\Http\Controllers\CategoryController;
 
 Route::get('/', [CategoryController::class, 'categoryIndex']);
 
-Route::get('categoryIndex/{sort_type?}', [CategoryController::class, 'categoryIndex']);
+Route::get('categoryIndex/{sort_type?}/{param?}', [CategoryController::class, 'categoryIndex'])->name('tree.categoryIndex');
 
 Route::get('tree.addCategory', [CategoryController::class, 'addCategory'])->name('tree.addCategory');
 
 Route::get('tree.specialSorting', [CategoryController::class, 'specialSorting'])->name('tree.specialSortingGet');
 
-Route::get('tree.arrowSorting', [CategoryController::class, 'arrowSorting'])->name('tree.arrowSorting');
+Route::get('tree.arrowSorting/{id}/{type}',[CategoryController::class,'arrowSorting'])->name('tree.arrowSorting');
 
 Route::post('tree.specialSorting', [CategoryController::class, 'specialSorting'])->name('tree.specialSorting');
 

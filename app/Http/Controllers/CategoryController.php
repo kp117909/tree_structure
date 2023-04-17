@@ -14,9 +14,12 @@ class CategoryController extends Controller
         }else if($request->sort_type == "order"){
             $categories = Category::where('parent_id', '=', 0)->orderBy('title')->get();
             session()->put('sort_type', $request->sort_type);
-        }else if($request->sort_type == "desc"){
+        }else if($request->sort_type == "desc") {
             $categories = Category::where('parent_id', '=', 0)->orderBy('title', 'desc')->get();
             session()->put('sort_type', $request->sort_type);
+        }else if($request->sort_type == "arrow" || session('sort_type') == "arrow"){
+            $categories = Category::where('parent_id', '=', 0)->orderBy('sort_id')->get();
+            session()->put('sort_type', 'arrow');
         }
 
         return view('tree.categoryView', [
@@ -45,9 +48,13 @@ class CategoryController extends Controller
             'title_new'=>'required|max:50',
         ]);
 
+        $category_maxId = Category::where('parent_id' , '=', 0)->max("sort_id");
+
         $elem = $request->all();
         $elem['title'] = $request->title_new;
         $elem['parent_id'] = 0;
+        $elem['sort_id'] = $category_maxId + 1;
+
 
         Category::create($elem);
 
@@ -67,16 +74,26 @@ class CategoryController extends Controller
     }
 
     public function deleteCategory(Request $request){
+        $i = 0;
         $category = Category::find($request->id);
         $deleteCategory_parentId = $category->parent_id;
         $category_parent = Category::where('parent_id', '=', $category->id)->get();
-
+        $lower_categories = Category::where('parent_id', '=', $deleteCategory_parentId)->where('sort_id', '>', $category->sort_id)->orderBy("sort_id")->get();
+        foreach ($lower_categories as $lc){
+            $lc['sort_id'] = $category['sort_id'] + $i;
+            $i++;
+            $lc->update();
+        }
+        $max_value = Category::where('parent_id' , '=', $category->parent_id)->max('sort_id');
+        $im = 1;
         foreach ($category_parent as $cp){
             if($request->type == "all"){
                 $cp->delete();
             }else if ($request->type == "none"){
                 $cp->parent_id = $deleteCategory_parentId;
+                $cp->sort_id = $max_value + $im;
                 $cp->update();
+                $im++;
             }
         }
 
@@ -84,13 +101,12 @@ class CategoryController extends Controller
 
         return $category;
 
-
     }
     public function editCategoryParent(Request $request){
         $tree = [];
         $category = Category::find($request->id);
         $check_parent = Category::find($request->new_parent);
-
+        $category_maxId = Category::where('parent_id', '=', $request->new_parent)->max('sort_id');
         while($check_parent){
             array_unshift($tree, $check_parent->id);
             $check_parent = $check_parent->parent;
@@ -103,6 +119,7 @@ class CategoryController extends Controller
         }
 
         $category->parent_id = $request->new_parent;
+        $category->sort_id = $category_maxId +1;
         $category->update();
 
         return $category;
@@ -125,13 +142,30 @@ class CategoryController extends Controller
     }
 
     public function arrowSorting(Request $request){
+        $current_catalog = Category::findOrFail($request->id);
+        $temp_id = $current_catalog['sort_id'];
+        if($request->type == "down"){
+            $max_value = Category::where('parent_id' , '=', $current_catalog->parent_id)->max('sort_id');
+            if($current_catalog->sort_id != $max_value){
+                $higher_catalog = Category::where('sort_id' ,'=', $current_catalog->sort_id + 1)->where('parent_id', '=', $current_catalog->parent_id)->firstOrFail();
+                $current_catalog['sort_id'] = $temp_id + 1;
+                $higher_catalog['sort_id'] = $temp_id;
+                $current_catalog->update();
+                $higher_catalog->update();
+            }
+        }else if($request->type == "up"){
+            if($current_catalog->sort_id != '1') {
+                $lower_catalog = Category::where('sort_id', '=', $current_catalog->sort_id - 1)->where('parent_id', '=', $current_catalog->parent_id)->firstOrFail();
+                $current_catalog['sort_id'] = $temp_id - 1;
+                $lower_catalog['sort_id'] = $temp_id;
+                $current_catalog->update();
+                $lower_catalog->update();
+            }
+        }
+
         session()->put('sort_type', 'arrow');
+        return redirect()->route('tree.categoryIndex', ['sort_type' => 'arrow']);
 
-        $categories = Category::where('parent_id', '=', 0)->orderBy('sort_id')->get();
-
-        return view('tree.categoryView', [
-            'categories' => $categories,
-        ]);
     }
 
 }
