@@ -22,6 +22,8 @@ Route::get('tree.addCategory', [CategoryController::class, 'addCategory'])->name
 
 Route::get('tree.specialSorting', [CategoryController::class, 'specialSorting'])->name('tree.specialSortingGet');
 
+Route::get('tree.arrowSorting', [CategoryController::class, 'arrowSorting'])->name('tree.arrowSorting');
+
 Route::post('tree.specialSorting', [CategoryController::class, 'specialSorting'])->name('tree.specialSorting');
 
 Route::post('tree.addCategoryForm', [CategoryController::class, 'addCategoryForm'])->name('tree.addCategoryForm');

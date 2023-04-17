@@ -53,7 +53,14 @@
                             <li>
                                 <a id = "{{$category->id}}" onclick = "addCategory(this.id,'{{$category->title}}')">
                                     <i class="fa-solid fa-file-pen fa-lg" style="color: #0756f2;"></i>
-                                    </a>  {{$category->title}}
+                                </a>
+                                <a id = "{{$category->id}}" onclick = "arrowSorting(this.id,'up')">
+                                    <i class="fa-solid fa-arrow-up" style="color: #0756f2;"></i>
+                                </a>
+                                <a id = "{{$category->id}}" onclick = "arrowSorting(this.id,'down')">
+                                    <i class="fa-solid fa-arrow-down" style="color: #0756f2;"></i>
+                                </a>
+                                {{$category->title}}
                                 @if(count($category->childs))
                                     <i class="show fa-solid fa-chevron-right"></i>
                                     @if(session("sort_type") == 'none')
@@ -64,6 +71,8 @@
                                         @include('tree.childManageView', ['childs'=>$category->childs_orderByDesc])
                                     @elseif(session("sort_type") == "special")
                                         @include('tree.childManageView', ['childs'=>$category->childs_specialSorting])
+                                    @elseif(session("sort_type") == "arrow")
+                                        @include('tree.childManageView', ['childs'=>$category->childs_arrowSorting])
                                     @endif
                                 @endif
                             </li>
@@ -121,8 +130,9 @@
                     url: "{{ route('tree.addCategory') }}",
                     type: "GET",
                     dataType: 'json',
-                    data: {id: id, title: document.getElementById("title").value},
+                    data: {id: id, title: document.getElementById("title").value, sort_id:0,},
                     success: function (response) {
+                        console.log(response)
                         location.reload();
                     },
                     error: function (error) {
@@ -290,6 +300,21 @@
             showCancelButton: false,
             showDenyButton: false,
             showConfirmButton: false,
+        })
+    }
+
+    function arrowSorting(id, type){
+        $.ajax({
+            url: "{{ route('tree.arrowSorting') }}",
+            type: "GET",
+            dataType: 'json',
+            data: {id: id, sort:type},
+            success: function (response) {
+                location.reload();
+            },
+            error: function (error) {
+                Swal.fire(error.responseText, '', 'error');
+            },
         })
     }
 

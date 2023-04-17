@@ -29,7 +29,11 @@ class CategoryController extends Controller
         ]);
 
         $elem = $request->all();
+
+        $check_elem = Category::where("parent_id" , '=' , $elem['id'])->max('sort_id');
+
         $elem['parent_id'] = empty($elem['id']) ? 0: $elem['id'];
+        $elem['sort_id'] = ($check_elem + 1);
 
         Category::create($elem);
 
@@ -108,6 +112,7 @@ class CategoryController extends Controller
 
         session()->put('sort_type','special');
         session()->put('sort_key', $request->sort_letter);
+
         $categories = Category::where('parent_id', '=', 0)->where('title', 'LIKE', $request->sort_letter .'%')->get();
 
         $categories_rest = Category::where('parent_id', '=', 0)->where('title', 'NOT LIKE', $request->sort_letter .'%')->get();
@@ -117,7 +122,16 @@ class CategoryController extends Controller
         return view('tree.categoryView', [
             'categories' => $categories_union,
         ]);
+    }
 
+    public function arrowSorting(Request $request){
+        session()->put('sort_type', 'arrow');
+
+        $categories = Category::where('parent_id', '=', 0)->orderBy('sort_id')->get();
+
+        return view('tree.categoryView', [
+            'categories' => $categories,
+        ]);
     }
 
 }

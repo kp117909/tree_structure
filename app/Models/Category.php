@@ -10,7 +10,8 @@ class Category extends Model
 
     public $fillable =[
         'title',
-        'parent_id'
+        'parent_id',
+        'sort_id'
     ];
 
     protected $table = 'category';
@@ -34,6 +35,11 @@ class Category extends Model
             union($this->hasMany('App\Models\Category', 'parent_id', 'id')
                 ->where('title', 'NOT LIKE', session("sort_key") .'%')
             );
+    }
+
+    public function childs_arrowSorting(){
+        return $this->hasMany('App\Models\Category', 'parent_id', 'id')->orderBy('sort_id');
+
     }
 
     public function parent()
